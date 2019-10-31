@@ -6,11 +6,12 @@ output:
   prettydoc::html_pretty:
     theme: hpstr
     highlight: github
+    math: katex
 ---
 
 # A program to analysis all kind of Data
 
-```{r echo = TRUE, message = FALSE}
+```{r echo = FALSE, message = FALSE}
 library("dplyr") # this one is always a must
 library("readr") # for reading csv file
 library("knitr") # for tranforming this into others
@@ -18,17 +19,24 @@ library("kableExtra") # loaded this package for beautiful table show
 library("ggplot2") # to show the plots
 library("gridExtra") # to save the output in image file
 library("car") # for anova analysis
+#install.packages("Hmisc")
+library("Hmisc") # for summerizing data in a more sophisticated way
 d <- read.csv("example_anova.csv", header = TRUE) # reading the csv file containing data and save this data frame to d variable
 kable(d, format = 'html', caption = 'Data Set') %>% # showing the data frame in a table with a table caption
     kable_styling(bootstrap_options = c("striped", "hover", 'condensed')) # some beauty using bootstrap
 ```
 ```{r echo = FALSE, message = FALSE}
+dwithoutstack <- read.csv("example_anova.csv", header = TRUE)
 d <- stack(d) # stacking the data for anova analysis later
 attach(d) # attaching the data to this program
+Hmisc::describe(dwithoutstack)
 ```
 
-```{r}
-sstable <- anova(lm(values ~ ind)) # a simple anova analysis and linear model function for regression analysis and saving this to sstable variable
+```{r echo = FALSE, message = FALSE}
+model <- lm(values ~ ind)
+summary(model)
+#print(model)
+sstable <- anova(model) # a simple anova analysis and linear model function for regression analysis and saving this to sstable variable
 sstable <- round(sstable, digits = 7) # to round the decimal number in two
 kable(sstable, format = 'html', caption = 'ANOVA Table') %>% # showing the report in a table with a caption
     kable_styling(bootstrap_options = c("striped", "hover", "condensed")) # some beauty using bootstrap
